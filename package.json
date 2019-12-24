@@ -1,0 +1,20 @@
+{
+  "name": "azure-blob-batch-upload-tool",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@www.lejuhub.com:10026/carlos/azure-blob-batch-upload-tool.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@azure/storage-blob": "^12.0.1",
+    "dotenv": "^8.2.0",
+    "lodash": "^4.17.15"
+  }
+}
