@@ -6,6 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "bin": {
+    "carlos_azure_batch_uploader": "./index.js"
+  },
   "repository": {
     "type": "git",
     "url": "ssh://git@www.lejuhub.com:10026/carlos/azure-blob-batch-upload-tool.git"

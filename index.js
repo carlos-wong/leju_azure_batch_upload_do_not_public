@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 const { promisify } = require('util');
 const { resolve } = require('path');
 const { BlobServiceClient } = require('@azure/storage-blob');
@@ -8,7 +9,7 @@ const fs = require('fs');
 const readdir = promisify(fs.readdir);
 const stat = promisify(fs.stat);
 
-require('dotenv').config()
+// require('dotenv').config()
 
 
 async function getFiles(dir) {
@@ -39,7 +40,6 @@ async function upload_file_to_auzre(connect_str,containerName,dist_file) {
   const blockBlobClient = containerClient.getBlockBlobClient(path.basename(dist_file));
   return await blockBlobClient.uploadStream(fs.createReadStream(dist_file));
 }
-
 
 getFiles(scan_dir)
   .then(files => {
