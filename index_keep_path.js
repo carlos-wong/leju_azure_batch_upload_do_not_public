@@ -38,16 +38,22 @@ async function batch_upload_files(files_list,connect_str,containerName) {
 
 const text_html_content_type_list = [".js",".html",".css"];
 
+const upload_file_contenttype = {
+  ".js":"application/javascript",
+  ".html":"text/html",
+  ".css":"text/css",
+}
+
 async function upload_file_to_auzre(connect_str,containerName,dist_file) {
   var upload_file_path = '.'+_.split(dist_file,script_cwd)[1];
-  console.log("Uploading file:",upload_file_path," is set to text/html:",_.includes(text_html_content_type_list,path.extname(dist_file)));
+  console.log("Uploading file:",upload_file_path," is set content type to ",upload_file_contenttype[path.extname(dist_file)] || "application/octet-stream" );
   const blobServiceClient = await BlobServiceClient.fromConnectionString(connect_str);
   const containerClient = await blobServiceClient.getContainerClient(containerName);
   const blockBlobClient = containerClient.getBlockBlobClient(upload_file_path);
-  if (_.includes(text_html_content_type_list,path.extname(dist_file)) ) {
+  if (upload_file_contenttype[path.extname(dist_file)]) {
     return await blockBlobClient.uploadFile(dist_file,{
       blobHTTPHeaders: {
-        blobContentType: "text/html"
+        blobContentType: upload_file_contenttype[path.extname(dist_file)]
       }
     });
   }
