@@ -24,7 +24,9 @@ async function getFiles(dir) {
 
 let [cmd,scirptname,containerName,scan_dir,file_name_regex] = process.argv;
 
-console.log("Dump containerName is:",containerName," scan_dir is:",scan_dir," file_name_regex is:",file_name_regex);
+console.log("Dump process argv is:",process.argv);
+
+// console.log("Dump containerName is:",containerName," scan_dir is:",scan_dir," file_name_regex is:",file_name_regex);
 
 async function batch_upload_files(files_list,connect_str,containerName) {
   console.log("Left files to upload is:",files_list.length);
@@ -34,17 +36,29 @@ async function batch_upload_files(files_list,connect_str,containerName) {
   }
 }
 
+const text_html_content_type_list = [".js",".html",".css"];
 
 async function upload_file_to_auzre(connect_str,containerName,dist_file) {
   var upload_file_path = '.'+_.split(dist_file,script_cwd)[1];
-  console.log("Uploading file:",upload_file_path);
+  console.log("Uploading file:",upload_file_path," is set to text/html:",_.includes(text_html_content_type_list,path.extname(dist_file)));
   const blobServiceClient = await BlobServiceClient.fromConnectionString(connect_str);
   const containerClient = await blobServiceClient.getContainerClient(containerName);
   const blockBlobClient = containerClient.getBlockBlobClient(upload_file_path);
-  return await blockBlobClient.uploadStream(fs.createReadStream(dist_file));
+  if (_.includes(text_html_content_type_list,path.extname(dist_file)) ) {
+    return await blockBlobClient.uploadFile(dist_file,{
+      blobHTTPHeaders: {
+        blobContentType: "text/html"
+      }
+    });
+  }
+  else{
+    return await blockBlobClient.uploadFile(dist_file);
+  }
 }
 
 const script_cwd = path.resolve(process.cwd(), '.');
+
+console.log("scan_dir is:",scan_dir);
 
 getFiles(scan_dir)
   .then(files => {
@@ -59,7 +73,7 @@ getFiles(scan_dir)
       // console.log("Dump dist_file to upload is:",value," split cwd path is:",);
       return _.split(value,script_cwd)[1];
     });
-    // console.log("Dump filenames is:",);
+    // console.log("Dump filenames is:",filenames);
     batch_upload_files(valid_files,process.env.CONNECT_STR,containerName)
   })
   .catch(e => console.error(e));
